@@ -6,11 +6,16 @@ import android.content.Context
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import cn.chitanda.weather.model.Weather
+import cn.chitanda.weather.network.NetworkManager
 import cn.chitanda.weather.utils.Constant
 import com.tencent.mmkv.MMKV
+import kotlinx.coroutines.launch
 
 /**
  * @Author:       Chen
@@ -18,11 +23,18 @@ import com.tencent.mmkv.MMKV
  * @Email:        "chunjinchen1998@gmail.com"
  * @Description:
  */
+private const val TAG = "HomeFragmentViewModel"
+
 class HomeFragmentViewModel(application: Application) : AndroidViewModel(application) {
     private val applicationContext: Context = application.applicationContext
     val currentLocation = MutableLiveData("" to "")
     private val locationManager by lazy {
         applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    }
+    private val networkManager by lazy {
+        NetworkManager.getInstance { message ->
+            Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+        }
     }
     private val weatherList = MutableLiveData<List<Weather>>(listOf())
 
@@ -33,6 +45,15 @@ class HomeFragmentViewModel(application: Application) : AndroidViewModel(applica
             getLastKnowLocation()
         } else {
             currentLocation.value = longitude to latitude
+        }
+    }
+
+    fun getWeather(location: String) {
+        viewModelScope.launch {
+            val weather: Weather? = networkManager.getWeather(location)
+            weather?.let {
+                weatherList.postValue(listOf(weather))
+            }
         }
     }
 

@@ -53,24 +53,7 @@ class HomeFragment : Fragment() {
         viewModel.currentLocation.observe(viewLifecycleOwner, {
             Log.d(TAG, "init: $it")
             if (it.first.isEmpty() || it.second.isEmpty()) return@observe
-            RetrofitCreator.create(Api::class.java)
-                .getNowWeather(location = "${it.first},${it.second}").enqueue(
-                    object : retrofit2.Callback<ApiResult> {
-                        override fun onResponse(
-                            call: Call<ApiResult>,
-                            response: Response<ApiResult>
-                        ) {
-                            if (response.isSuccessful) {
-                                binding.textView.text = response.body().toString()
-                            } else {
-                                Log.e(TAG, "onResponse: ${response.message()}")
-                            }
-                        }
-
-                        override fun onFailure(call: Call<ApiResult>, t: Throwable) {
-                            Log.e(TAG, "onFailure: ${t.message}")
-                        }
-                    })
+            viewModel.getWeather("${it.first},${it.second}")
         })
     }
 }

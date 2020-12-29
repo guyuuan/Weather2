@@ -18,4 +18,22 @@ interface Api {
         @Query("key") key: String = "2133f20e86f744acbf8d016fe0b2c8a4"
     ): Call<ApiResult>
 
+    @GET("https://geoapi.qweather.com/v2/city/lookup")
+    fun getCity(
+        @Query("location") location: String,
+        @Query("key") key: String = "2133f20e86f744acbf8d016fe0b2c8a4"
+    ): Call<ApiResult>
+
+    @GET("/v7/weather/7d")
+    fun getDaily(
+        @Query("location") location: String,
+        @Query("key") key: String = "2133f20e86f744acbf8d016fe0b2c8a4"
+    ): Call<ApiResult>
+
+    @GET("/v7/weather/24h")
+    fun getHourly(
+        @Query("location") location: String,
+        @Query("key") key: String = "2133f20e86f744acbf8d016fe0b2c8a4"
+    ): Call<ApiResult>
+
 }

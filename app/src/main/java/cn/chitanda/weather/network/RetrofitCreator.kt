@@ -21,7 +21,7 @@ object RetrofitCreator {
             .client(OkHttpClient.Builder().apply {
                 addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
                     override fun log(message: String) {
-                        Log.i(TAG, "log: $message")
+                        Log.i(TAG, message)
                     }
                 }).apply { level = HttpLoggingInterceptor.Level.BODY })
             }.build())

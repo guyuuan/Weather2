@@ -7,9 +7,9 @@ package cn.chitanda.weather.model
  * @Description:
  */
 data class Weather(
-    val updateTime: String,
+    val updateTime: Long,
     val location: Location,
-    val now: Now,
-    val daily: List<Daily>,
-    val hourly: List<Hourly>
+    val now: Now?,
+    val daily: List<Daily>?,
+    val hourly: List<Hourly>?
 )
