@@ -1,7 +1,6 @@
 package cn.chitanda.weather.fragment
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,21 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import cn.chitanda.weather.adapter.WeatherViewPagerAdapter
 import cn.chitanda.weather.databinding.FragmentHomeBinding
-import cn.chitanda.weather.model.ApiResult
-import cn.chitanda.weather.network.Api
-import cn.chitanda.weather.network.RetrofitCreator
-import cn.chitanda.weather.viewmodel.HomeFragmentViewModel
+import cn.chitanda.weather.viewmodel.WeatherViewModel
 import com.permissionx.guolindev.PermissionX
-import retrofit2.Call
-import retrofit2.Response
 
 private const val TAG = "HomeFragment"
 
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
-    private val viewModel: HomeFragmentViewModel by viewModels()
+    private val viewModel: WeatherViewModel by viewModels()
+
+    private val weatherViewPagerAdapter by lazy { WeatherViewPagerAdapter() }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,13 +44,17 @@ class HomeFragment : Fragment() {
             }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun init() {
+        binding.weatherViewPager.adapter = weatherViewPagerAdapter
         viewModel.init()
         viewModel.currentLocation.observe(viewLifecycleOwner, {
             Log.d(TAG, "init: $it")
             if (it.first.isEmpty() || it.second.isEmpty()) return@observe
             viewModel.getWeather("${it.first},${it.second}")
+            viewModel.getWeather("101010100")
+        })
+        viewModel.weatherList.observe(viewLifecycleOwner, {
+            weatherViewPagerAdapter.submitList(it)
         })
     }
 }

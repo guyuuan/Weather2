@@ -54,7 +54,7 @@ class NetworkManager private constructor(private val onError: (String) -> Unit) 
         Weather(
             updateTime = System.currentTimeMillis(),
             location = city.await().locations?.first()
-                ?: return@withContext null,
+                ?: throw RuntimeException("get location info failed"),
             now = now.await().now,
             daily = daily.await().daily,
             hourly = hourly.await().hourly

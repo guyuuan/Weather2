@@ -9,6 +9,7 @@ import android.location.LocationManager
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import cn.chitanda.weather.model.Weather
@@ -25,9 +26,11 @@ import kotlinx.coroutines.launch
  */
 private const val TAG = "HomeFragmentViewModel"
 
-class HomeFragmentViewModel(application: Application) : AndroidViewModel(application) {
+class WeatherViewModel(application: Application) : AndroidViewModel(application) {
     private val applicationContext: Context = application.applicationContext
-    val currentLocation = MutableLiveData("" to "")
+    private val _currentLocation = MutableLiveData("" to "")
+    val currentLocation: LiveData<Pair<String, String>>
+        get() = _currentLocation
     private val locationManager by lazy {
         applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     }
@@ -36,7 +39,9 @@ class HomeFragmentViewModel(application: Application) : AndroidViewModel(applica
             Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
         }
     }
-    private val weatherList = MutableLiveData<List<Weather>>(listOf())
+    private val _weatherList = MutableLiveData<List<Weather>>(listOf())
+    val weatherList: LiveData<List<Weather>>
+        get() = _weatherList
 
     fun init() {
         val latitude = MMKV.defaultMMKV()?.decodeString(Constant.MMKV_KEY_LATITUDE, "")
@@ -44,16 +49,19 @@ class HomeFragmentViewModel(application: Application) : AndroidViewModel(applica
         if (latitude.isNullOrEmpty() || longitude.isNullOrEmpty()) {
             getLastKnowLocation()
         } else {
-            currentLocation.value = longitude to latitude
+            _currentLocation.value = longitude to latitude
         }
     }
 
     fun getWeather(location: String) {
-        viewModelScope.launch {
-            val weather: Weather? = networkManager.getWeather(location)
-            weather?.let {
-                weatherList.postValue(listOf(weather))
-            }
+        launch {
+            val weather: Weather = networkManager.getWeather(location)
+            _weatherList.postValue(
+                listOf(
+                    _weatherList.value ?: listOf(),
+                    listOf(weather)
+                ).flatten()
+            )
         }
     }
 
@@ -61,7 +69,7 @@ class HomeFragmentViewModel(application: Application) : AndroidViewModel(applica
     private fun getLastKnowLocation() {
         val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         if (lastKnownLocation != null) {
-            currentLocation.value =
+            _currentLocation.value =
                 lastKnownLocation.longitude.toString() to lastKnownLocation.latitude.toString()
         } else {
             requestUpdateLocation()
@@ -69,12 +77,13 @@ class HomeFragmentViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private val locationUpdateListener by lazy {
-        object : LocationListener {
+        val value = object : LocationListener {
             override fun onLocationChanged(location: Location) {
-                currentLocation.postValue(location.longitude.toString() to location.latitude.toString())
+                _currentLocation.postValue(location.longitude.toString() to location.latitude.toString())
                 locationManager.removeUpdates(this)
             }
         }
+        value
     }
 
     @SuppressLint("MissingPermission")
@@ -85,5 +94,15 @@ class HomeFragmentViewModel(application: Application) : AndroidViewModel(applica
             0f,
             locationUpdateListener
         )
+    }
+
+    private fun launch(block: suspend () -> Unit) {
+        viewModelScope.launch {
+            try {
+                block()
+            } catch (e: Throwable) {
+                Log.e(TAG, "launch: $e")
+            }
+        }
     }
 }
