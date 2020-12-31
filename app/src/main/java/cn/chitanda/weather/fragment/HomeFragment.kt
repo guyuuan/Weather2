@@ -32,6 +32,7 @@ class HomeFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        init()
         PermissionX.init(this).permissions(Manifest.permission.ACCESS_FINE_LOCATION)
             .onExplainRequestReason { scope, deniedList ->
                 scope.showRequestReasonDialog(deniedList, "Weather需要您同意一下权限才能正常使用", "好的", "不")
@@ -39,19 +40,18 @@ class HomeFragment : Fragment() {
                 scope.showForwardToSettingsDialog(deniedList, "您需要去设置当中同意定位权限", "好")
             }.request { allGranted, grantedList, deniedList ->
                 if (allGranted && grantedList.isNotEmpty() && deniedList.isEmpty()) {
-                    init()
+                    viewModel.init()
                 }
             }
     }
 
     private fun init() {
         binding.weatherViewPager.adapter = weatherViewPagerAdapter
-        viewModel.init()
         viewModel.currentLocation.observe(viewLifecycleOwner, {
             Log.d(TAG, "init: $it")
             if (it.first.isEmpty() || it.second.isEmpty()) return@observe
             viewModel.getWeather("${it.first},${it.second}")
-            viewModel.getWeather("101010100")
+//            viewModel.getWeather("101010100")
         })
         viewModel.weatherList.observe(viewLifecycleOwner, {
             weatherViewPagerAdapter.submitList(it)

@@ -63,11 +63,12 @@
                 app:layout_constraintTop_toTopOf="@+id/now_text"
                 tools:text="- -" />
 
-            <View
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/dailyTempView"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_marginTop="16dp"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/now_text" />

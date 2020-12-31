@@ -5,9 +5,12 @@ import android.content.res.Resources
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.chitanda.weather.databinding.WeatherItemBinding
+import cn.chitanda.weather.model.Daily
 import cn.chitanda.weather.model.Weather
+import cn.chitanda.weather.widget.polyline.PolyLineDecoration
 
 /**
  * @Author:       Chen
@@ -37,6 +40,14 @@ class WeatherViewPagerAdapter : BaseAdapter<Weather, WeatherItemViewHolder>() {
                 height = holder.paddingTop
                 Log.d("adapter", "onBindViewHolder: h ${holder.paddingTop}")
             }
+        }
+        holder.dailyTemp.apply {
+            adapter = DailyRvAdapter().apply {
+                submitList(item.daily as MutableList<Daily>?)
+            }
+            layoutManager =
+                LinearLayoutManager(context).apply { orientation = LinearLayoutManager.HORIZONTAL }
+//            addItemDecoration(PolyLineDecoration())
         }
     }
 
