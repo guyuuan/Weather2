@@ -2,15 +2,19 @@ package cn.chitanda.weather.fragment
 
 import android.Manifest
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.viewpager2.widget.ViewPager2
 import cn.chitanda.weather.adapter.WeatherViewPagerAdapter
 import cn.chitanda.weather.databinding.FragmentHomeBinding
 import cn.chitanda.weather.viewmodel.WeatherViewModel
+import cn.chitanda.weather.widget.weather.controller.SunnyController
 import com.permissionx.guolindev.PermissionX
 
 private const val TAG = "HomeFragment"
@@ -46,7 +50,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun init() {
-        binding.weatherViewPager.adapter = weatherViewPagerAdapter
+        binding.weatherViewPager.apply {
+            adapter = weatherViewPagerAdapter
+
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    Handler(Looper.myLooper()!!).postDelayed({binding.cityName.text =
+                        weatherViewPagerAdapter.currentList[position].location.name},20)
+                }
+            })
+        }
         viewModel.currentLocation.observe(viewLifecycleOwner, {
             Log.d(TAG, "init: $it")
             if (it.first.isEmpty() || it.second.isEmpty()) return@observe
@@ -55,6 +69,12 @@ class HomeFragment : Fragment() {
         })
         viewModel.weatherList.observe(viewLifecycleOwner, {
             weatherViewPagerAdapter.submitList(it)
+//            Handler(Looper.myLooper()!!).postDelayed({binding.cityName.text =
+//                weatherViewPagerAdapter.currentList[binding.weatherViewPager.currentItem].location.name},1000)
         })
+        binding.swipeRefresh.setOnRefreshListener {
+            binding.swipeRefresh.isRefreshing = false
+        }
+        binding.dynamicWeatherView.weatherController = SunnyController()
     }
 }

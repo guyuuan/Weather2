@@ -33,7 +33,6 @@ class DailyRvAdapter : BaseAdapter<Daily, DailyItemViewHolder>() {
         position: Int,
         payloads: MutableList<Any>
     ) {
-        Log.d(TAG, "onBindViewHolder: payloads: $payloads")
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position)
         } else {
