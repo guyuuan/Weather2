@@ -2,7 +2,6 @@ package cn.chitanda.weather.widget.weather.controller
 
 import android.graphics.Canvas
 import android.view.View
-import cn.chitanda.weather.model.Weather
 
 /**
  *@auther: Chen
@@ -10,6 +9,9 @@ import cn.chitanda.weather.model.Weather
  *@description:
  **/
 interface IController {
-    fun init(view:View,width:Int,height:Int)
+    fun init(view: View, width: Int, height: Int)
+    fun setOrientationAngles(xAngle: Float, yAngle: Float)
     fun draw(canvas: Canvas)
+    fun resumeAnim()
+    fun stopAnim()
 }

@@ -3,8 +3,12 @@ package cn.chitanda.weather.widget.weather.controller
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.PointF
 import android.view.View
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  *@auther: Chen
@@ -15,18 +19,37 @@ abstract class BaseController : IController {
     protected val TAG = "BaseController"
     protected var width = 0
     protected var height = 0
+    protected var xAngle = 0f
+    protected var yAngle = 0f
+    protected val originPoint = PointF()
     protected lateinit var view: View
+    protected var isInited =false
+    protected val polygonPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+    }
+
+    protected open fun setOriginPoint() {
+        originPoint.x = width / 2f
+        originPoint.y = 0f
+    }
+
+
+
     override fun init(view: View, width: Int, height: Int) {
         this.view = view
         this.width = width
         this.height = height
-        calculate()
+        setOriginPoint()
+        isInited =true
     }
 
-    abstract fun calculate()
-    abstract fun startAnim()
-    protected val polygonPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.FILL
+    override fun setOrientationAngles(xAngle: Float, yAngle: Float) {
+        if (!isInited) return
+        this.xAngle = xAngle
+        this.yAngle = yAngle
+//        originPoint.x =width/2- xAngle * (width / 2f) / 90f
+//        view.postInvalidate()
+//        view.postInvalidate()
     }
 
     /*
@@ -38,15 +61,15 @@ abstract class BaseController : IController {
      **/
     protected fun drawPolygon(
         canvas: Canvas,
-        x: Float,
-        y: Float,
         count: Int,
         radius: Float,
-        rotation: Float = 0F
+        rotation: Float = 0F,
+        x: Float = 0f,
+        y: Float = 0f
     ) {
         if (count < 5) return
         canvas.save()
-        canvas.translate(x, y)
+        canvas.translate(x + originPoint.x, y + originPoint.y)
         canvas.rotate(rotation)
         val path = Path()
         repeat(count) {

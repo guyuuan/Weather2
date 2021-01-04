@@ -1,6 +1,8 @@
 package cn.chitanda.weather.fragment
 
 import android.Manifest
+import android.content.Context
+import android.hardware.*
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -16,13 +18,19 @@ import cn.chitanda.weather.databinding.FragmentHomeBinding
 import cn.chitanda.weather.viewmodel.WeatherViewModel
 import cn.chitanda.weather.widget.weather.controller.SunnyController
 import com.permissionx.guolindev.PermissionX
+import kotlin.math.PI
 
 private const val TAG = "HomeFragment"
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), SensorEventListener {
 
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: WeatherViewModel by viewModels()
+    private lateinit var mSensorManager: SensorManager
+    private val accelerometerReading = FloatArray(3)
+    private val magnetometerReading = FloatArray(3)
+    private val rotationMatrix = FloatArray(9)
+    private val orientationAngles = FloatArray(3)
 
     private val weatherViewPagerAdapter by lazy { WeatherViewPagerAdapter() }
     override fun onCreateView(
@@ -34,9 +42,13 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        init()
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        init()
         PermissionX.init(this).permissions(Manifest.permission.ACCESS_FINE_LOCATION)
             .onExplainRequestReason { scope, deniedList ->
                 scope.showRequestReasonDialog(deniedList, "Weather需要您同意一下权限才能正常使用", "好的", "不")
@@ -49,15 +61,71 @@ class HomeFragment : Fragment() {
             }
     }
 
+    override fun onResume() {
+        mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER).also { accelerometer ->
+            mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI)
+        }
+        mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD).also { field ->
+            mSensorManager.registerListener(this, field, SensorManager.SENSOR_DELAY_UI)
+        }
+        binding.dynamicWeatherView.weatherController?.resumeAnim()
+        super.onResume()
+    }
+
+    override fun onPause() {
+        mSensorManager.unregisterListener(this)
+        binding.dynamicWeatherView.weatherController?.stopAnim()
+        super.onPause()
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
+            System.arraycopy(event.values, 0, accelerometerReading, 0, accelerometerReading.size)
+        } else if (event?.sensor?.type == Sensor.TYPE_MAGNETIC_FIELD) {
+            System.arraycopy(event.values, 0, magnetometerReading, 0, magnetometerReading.size)
+        }
+        updateOrientationAngles()
+    }
+
+    // Compute the three orientation angles based on the most recent readings from
+    // the device's accelerometer and magnetometer.
+    private fun updateOrientationAngles() {
+        // Update rotation matrix, which is needed to update orientation angles.
+        SensorManager.getRotationMatrix(
+            rotationMatrix,
+            null,
+            accelerometerReading,
+            magnetometerReading
+        )
+
+        // "mRotationMatrix" now has up-to-date information.
+
+        SensorManager.getOrientation(rotationMatrix, orientationAngles)
+        // "orientationAngles" now has up-to-date information.
+//        binding.cityName.text =
+//            " z ${orientationAngles[0] * 180 / PI} \n x ${orientationAngles[2] * 180 / PI} \n y ${orientationAngles[1] * 180 / PI}"
+        binding.dynamicWeatherView.weatherController?.setOrientationAngles(
+            (orientationAngles[2] * 180 / PI).toFloat(),
+            (orientationAngles[1] * 180 / PI).toFloat()
+        )
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+
+    }
+
     private fun init() {
+        mSensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
         binding.weatherViewPager.apply {
             adapter = weatherViewPagerAdapter
 
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    Handler(Looper.myLooper()!!).postDelayed({binding.cityName.text =
-                        weatherViewPagerAdapter.currentList[position].location.name},20)
+                    Handler(Looper.myLooper()!!).postDelayed({
+                        binding.cityName.text =
+                            weatherViewPagerAdapter.currentList[position].location.name
+                    }, 20)
                 }
             })
         }
