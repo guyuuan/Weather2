@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
+import kotlin.math.abs
 
 /**
  *@auther: Chen
@@ -50,48 +51,40 @@ class SunnyController : BaseController() {
     }
 
     override fun setOrientationAngles(xAngle: Float, yAngle: Float) {
-        super.setOrientationAngles(xAngle, yAngle)
-        val endX = width / 2 - xAngle * (width / 2f) / 90f
-        val endY = -minRadius * 2 - yAngle * (width / 2f) / 90f
-        xAnimator?.cancel()
-        yAnimator?.cancel()
-        xAnimator = ValueAnimator.ofFloat(originPoint.x, endX).apply {
-            duration = 300
-            interpolator = AccelerateDecelerateInterpolator()
-            addUpdateListener { v ->
-                originPoint.x = v.animatedValue as Float
-                view.postInvalidate()
-            }
-            start()
-        }
-        yAnimator = ValueAnimator.ofFloat(originPoint.y, endY).apply {
-            duration = 300
-            interpolator = AccelerateDecelerateInterpolator()
-            addUpdateListener { v ->
-                originPoint.y = v.animatedValue as Float
-                view.postInvalidate()
-            }
-            start()
-        }
+        if (!isInited)return
+//         if (abs(this.xAngle-xAngle) >=5)
+             this.xAngle =xAngle
+//         if (abs(this.yAngle -yAngle) >=5)
+             this.yAngle = yAngle
+     try {
+         yAnimator?.cancel()
+         xAnimator?.cancel()
+         val endX = width / 2 - xAngle * (width / 5f*3) / 90f
+         val endY = -minRadius * 2 - yAngle * (width / 5f*3) / 90f
+         xAnimator = ValueAnimator.ofFloat(originPoint.x, endX).apply {
+             duration = 300
+             interpolator = AccelerateDecelerateInterpolator()
+             addUpdateListener { v ->
+                 originPoint.x = v.animatedValue as Float
+                 view.postInvalidate()
+             }
+             start()
+         }
+         yAnimator = ValueAnimator.ofFloat(originPoint.y, endY).apply {
+             duration = 300
+             interpolator = AccelerateDecelerateInterpolator()
+             addUpdateListener { v ->
+                 originPoint.y = v.animatedValue as Float
+                 view.postInvalidate()
+             }
+             start()
+         }
+     }catch (e:Throwable){
+         e.printStackTrace()
+     }
     }
 
     override fun draw(canvas: Canvas) {
-//        polygonPaint.color = colors[7]
-//        drawPolygon(canvas, 10, minRadius * 8, rotation + 80f)
-//        polygonPaint.color = colors[6]
-//        drawPolygon(canvas, 10, minRadius * 7, rotation + 70f)
-//        polygonPaint.color = colors[5]
-//        drawPolygon(canvas, 10, minRadius * 6, rotation + 60f)
-//        polygonPaint.color = colors[4]
-//        drawPolygon(canvas, 10, minRadius * 5, rotation + 50f)
-//        polygonPaint.color = colors[3]
-//        drawPolygon(canvas, 10, minRadius * 4, rotation + 40f)
-//        polygonPaint.color = colors[2]
-//        drawPolygon(canvas, 10, minRadius * 3, rotation + 30f)
-//        polygonPaint.color = colors[1]
-//        drawPolygon(canvas, 10, minRadius * 2, rotation + 20f)
-//        polygonPaint.color = colors[0]
-//        drawPolygon(canvas, 10, width / 8f, rotation)
         for ((i, color) in colors.withIndex().reversed()) {
             polygonPaint.color = color
             drawPolygon(canvas, 10, minRadius * (i + 1), rotation + 10f * i)

@@ -99,17 +99,16 @@ class HomeFragment : Fragment(), SensorEventListener {
         )
 
         // "mRotationMatrix" now has up-to-date information.
-
         SensorManager.getOrientation(rotationMatrix, orientationAngles)
         // "orientationAngles" now has up-to-date information.
-//        binding.cityName.text =
-//            " z ${orientationAngles[0] * 180 / PI} \n x ${orientationAngles[2] * 180 / PI} \n y ${orientationAngles[1] * 180 / PI}"
         binding.dynamicWeatherView.weatherController?.setOrientationAngles(
             (orientationAngles[2] * 180 / PI).toFloat(),
             (orientationAngles[1] * 180 / PI).toFloat()
         )
     }
 
+    private var tempX = 0f
+    private var tempY = 0f
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
 
     }

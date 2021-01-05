@@ -45,7 +45,7 @@ abstract class BaseController : IController {
 
     override fun setOrientationAngles(xAngle: Float, yAngle: Float) {
         if (!isInited) return
-        this.xAngle = xAngle
+        this.xAngle =xAngle
         this.yAngle = yAngle
 //        originPoint.x =width/2- xAngle * (width / 2f) / 90f
 //        view.postInvalidate()
