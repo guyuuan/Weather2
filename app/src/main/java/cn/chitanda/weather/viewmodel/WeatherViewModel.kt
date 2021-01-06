@@ -50,6 +50,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
             getLastKnowLocation()
         } else {
             _currentLocation.value = longitude to latitude
+            getLastKnowLocation()
         }
     }
 
@@ -71,6 +72,8 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
         if (lastKnownLocation != null) {
             _currentLocation.value =
                 lastKnownLocation.longitude.toString() to lastKnownLocation.latitude.toString()
+            MMKV.defaultMMKV()?.encode(Constant.MMKV_KEY_LATITUDE,lastKnownLocation.latitude)
+            MMKV.defaultMMKV()?.encode(Constant.MMKV_KEY_LONGITUDE,lastKnownLocation.longitude)
         } else {
             requestUpdateLocation()
         }
@@ -80,6 +83,8 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
         val value = object : LocationListener {
             override fun onLocationChanged(location: Location) {
                 _currentLocation.postValue(location.longitude.toString() to location.latitude.toString())
+                MMKV.defaultMMKV()?.encode(Constant.MMKV_KEY_LATITUDE,location.latitude)
+                MMKV.defaultMMKV()?.encode(Constant.MMKV_KEY_LONGITUDE,location.longitude)
                 locationManager.removeUpdates(this)
             }
         }

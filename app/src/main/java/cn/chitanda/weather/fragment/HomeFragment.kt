@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
@@ -107,8 +108,6 @@ class HomeFragment : Fragment(), SensorEventListener {
         )
     }
 
-    private var tempX = 0f
-    private var tempY = 0f
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
 
     }
@@ -132,16 +131,14 @@ class HomeFragment : Fragment(), SensorEventListener {
             Log.d(TAG, "init: $it")
             if (it.first.isEmpty() || it.second.isEmpty()) return@observe
             viewModel.getWeather("${it.first},${it.second}")
-//            viewModel.getWeather("101010100")
         })
         viewModel.weatherList.observe(viewLifecycleOwner, {
             weatherViewPagerAdapter.submitList(it)
-//            Handler(Looper.myLooper()!!).postDelayed({binding.cityName.text =
-//                weatherViewPagerAdapter.currentList[binding.weatherViewPager.currentItem].location.name},1000)
         })
         binding.swipeRefresh.setOnRefreshListener {
             binding.swipeRefresh.isRefreshing = false
         }
-        binding.dynamicWeatherView.weatherController = SunnyController()
+
+        binding.dynamicWeatherView.weatherController = SunnyController(requireContext())
     }
 }

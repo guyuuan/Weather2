@@ -5,8 +5,8 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
 import android.view.View
+import androidx.annotation.ColorInt
 import kotlin.math.PI
-import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -23,8 +23,11 @@ abstract class BaseController : IController {
     protected var yAngle = 0f
     protected val originPoint = PointF()
     protected lateinit var view: View
-    protected var isInited =false
+    protected var isInited = false
     protected val polygonPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+    }
+    private val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
     }
 
@@ -34,18 +37,17 @@ abstract class BaseController : IController {
     }
 
 
-
     override fun init(view: View, width: Int, height: Int) {
         this.view = view
         this.width = width
         this.height = height
         setOriginPoint()
-        isInited =true
+        isInited = true
     }
 
     override fun setOrientationAngles(xAngle: Float, yAngle: Float) {
         if (!isInited) return
-        this.xAngle =xAngle
+        this.xAngle = xAngle
         this.yAngle = yAngle
 //        originPoint.x =width/2- xAngle * (width / 2f) / 90f
 //        view.postInvalidate()
@@ -83,6 +85,10 @@ abstract class BaseController : IController {
         path.close()
         canvas.drawPath(path, polygonPaint)
         canvas.restore()
+    }
+
+    protected fun drawBackground(canvas: Canvas,@ColorInt color: Int) {
+        canvas.drawColor(color)
     }
 
     protected fun sin(num: Float) = sin(num * PI / 180).toFloat()
