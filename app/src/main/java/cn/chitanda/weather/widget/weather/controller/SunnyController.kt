@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import cn.chitanda.weather.R
@@ -11,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.abs
 
 /**
  *@auther: Chen
@@ -19,8 +21,9 @@ import kotlinx.coroutines.withContext
  **/
 class SunnyController(protected val context: Context) : BaseController() {
     private var rotation = 0f
+    private var scale: Float = 1f
     private val minRadius: Float
-        get() = width / 8f
+        get() = width / 7f * scale
     private val colors = listOf(
         Color.parseColor("#C54B34"),
         Color.parseColor("#C6633C"),
@@ -44,6 +47,7 @@ class SunnyController(protected val context: Context) : BaseController() {
     }
     private var xAnimator: ValueAnimator? = null
     private var yAnimator: ValueAnimator? = null
+    private var scaleAnimator: ValueAnimator? = null
     override fun init(view: View, width: Int, height: Int) {
         super.init(view, width, height)
         resumeAnim()
@@ -51,19 +55,17 @@ class SunnyController(protected val context: Context) : BaseController() {
 
     override fun setOriginPoint() {
         originPoint.x = width / 2f
-        originPoint.y = -minRadius * 2
+        originPoint.y = -width / 4f
     }
 
     override fun setOrientationAngles(xAngle: Float, yAngle: Float) {
         if (!isInited) return
-//        if (abs(this.xAngle - xAngle) >= 2)
-        this.xAngle = xAngle
-//        if (abs(this.yAngle - yAngle) >= 2)
-        this.yAngle = yAngle
-        val endX = width / 2 - xAngle * (width / 5f * 3) / 90f
-        val endY = -minRadius * 2 - yAngle * (width / 5f * 3) / 90f
-//        originPoint.x = endX
-//        originPoint.y = endY
+        if (abs(this.xAngle - xAngle) >= 1) this.xAngle = xAngle
+        if (abs(this.yAngle - yAngle) >= 1) this.yAngle = yAngle
+        val endX = width / 2 - width * 0.5f * sin(this.xAngle)
+        val endY = -width / 4f + abs(width * 0.85f * sin(this.yAngle/2f))
+
+        Log.d(TAG, "setOrientationAngles: x ${this.xAngle} y ${this.yAngle}  scale ${scale}")
         try {
             MainScope().launch {
                 withContext(Dispatchers.Main) {
@@ -71,23 +73,30 @@ class SunnyController(protected val context: Context) : BaseController() {
                     xAnimator?.cancel()
 
                     xAnimator = ValueAnimator.ofFloat(originPoint.x, endX).apply {
-                        duration = 300
+                        duration = 500
                         interpolator = LinearInterpolator()
                         addUpdateListener { v ->
                             originPoint.x = v.animatedValue as Float
-//                 view.postInvalidate()
                         }
                         start()
                     }
                     yAnimator = ValueAnimator.ofFloat(originPoint.y, endY).apply {
-                        duration = 300
+                        duration = 500
                         interpolator = LinearInterpolator()
                         addUpdateListener { v ->
                             originPoint.y = v.animatedValue as Float
-//                 view.postInvalidate()
                         }
                         start()
                     }
+                    scaleAnimator =
+                        ValueAnimator.ofFloat(scale, 1f - 0.4f / 90 * abs(yAngle % 90f)).apply {
+                            duration = 500
+                            interpolator = LinearInterpolator()
+                            addUpdateListener { v ->
+                                scale = v.animatedValue as Float
+                            }
+                            start()
+                        }
                 }
             }
         } catch (e: Throwable) {
@@ -105,14 +114,17 @@ class SunnyController(protected val context: Context) : BaseController() {
 
     override fun resumeAnim() {
         if (!isInited) return
-        rotationAnim.start()
+        if (rotationAnim.isPaused) rotationAnim.resume()
+        else rotationAnim.start()
         if (xAnimator?.isPaused == false) xAnimator?.resume()
         if (yAnimator?.isPaused == false) yAnimator?.resume()
+        if (scaleAnimator?.isPaused == false) scaleAnimator?.resume()
     }
 
     override fun stopAnim() {
         rotationAnim.pause()
         if (xAnimator?.isRunning == false) xAnimator?.pause()
         if (yAnimator?.isRunning == false) yAnimator?.pause()
+        if (scaleAnimator?.isRunning == false) scaleAnimator?.pause()
     }
 }

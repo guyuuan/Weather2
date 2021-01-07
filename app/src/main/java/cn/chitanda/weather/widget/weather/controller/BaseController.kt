@@ -9,6 +9,7 @@ import androidx.annotation.ColorInt
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.math.tan
 
 /**
  *@auther: Chen
@@ -16,7 +17,7 @@ import kotlin.math.sin
  *@description:
  **/
 abstract class BaseController : IController {
-    protected val TAG = "BaseController"
+    protected val TAG = "WeatherController"
     protected var width = 0
     protected var height = 0
     protected var xAngle = 0f
@@ -87,11 +88,12 @@ abstract class BaseController : IController {
         canvas.restore()
     }
 
-    protected fun drawBackground(canvas: Canvas,@ColorInt color: Int) {
+    protected fun drawBackground(canvas: Canvas, @ColorInt color: Int) {
         canvas.drawColor(color)
     }
 
     protected fun sin(num: Float) = sin(num * PI / 180).toFloat()
     protected fun cos(num: Float) = cos(num * PI / 180).toFloat()
+    protected fun tan(num: Float) = tan(num * PI / 180).toFloat()
 
 }
