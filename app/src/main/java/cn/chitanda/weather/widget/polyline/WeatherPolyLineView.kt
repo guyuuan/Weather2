@@ -30,15 +30,15 @@ class WeatherPolyLineView @JvmOverloads constructor(
 
     private val maxLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
-        strokeWidth = 1.5f.dp.toFloat()
+        strokeWidth = 1.5f.dp
     }
     private val minLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.parseColor("#99FFFFFF")
-        strokeWidth = 1f.dp.toFloat()
+        strokeWidth = 1f.dp
     }
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
-        textSize = 14.dp.toFloat()
+        textSize = 14.dp
         textAlign = Paint.Align.CENTER
     }
     private val pathPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -122,36 +122,36 @@ class WeatherPolyLineView @JvmOverloads constructor(
 
     private fun drawPoly(canvas: Canvas) {
         calculatePoint()
-            canvas.drawLine(
-                startMaxPoint.x,
-                startMaxPoint.y,
-                midMaxPoint.x,
-                midMaxPoint.y,
-                maxLinePaint
-            )
-            canvas.drawLine(
-                startMinPoint.x,
-                startMinPoint.y,
-                midMinPoint.x,
-                midMinPoint.y,
-                minLinePaint
-            )
-            canvas.drawPath(leftPath, pathPaint)
-            canvas.drawLine(
-                midMaxPoint.x,
-                midMaxPoint.y,
-                endMaxPoint.x,
-                endMaxPoint.y,
-                maxLinePaint
-            )
-            canvas.drawLine(
-                midMinPoint.x,
-                midMinPoint.y,
-                endMinPoint.x,
-                endMinPoint.y,
-                minLinePaint
-            )
-            canvas.drawPath(rightPath, pathPaint)
+        canvas.drawLine(
+            startMaxPoint.x,
+            startMaxPoint.y,
+            midMaxPoint.x,
+            midMaxPoint.y,
+            maxLinePaint
+        )
+        canvas.drawLine(
+            startMinPoint.x,
+            startMinPoint.y,
+            midMinPoint.x,
+            midMinPoint.y,
+            minLinePaint
+        )
+        canvas.drawPath(leftPath, pathPaint)
+        canvas.drawLine(
+            midMaxPoint.x,
+            midMaxPoint.y,
+            endMaxPoint.x,
+            endMaxPoint.y,
+            maxLinePaint
+        )
+        canvas.drawLine(
+            midMinPoint.x,
+            midMinPoint.y,
+            endMinPoint.x,
+            endMinPoint.y,
+            minLinePaint
+        )
+        canvas.drawPath(rightPath, pathPaint)
     }
 
     var currentList: List<Daily>? = listOf()

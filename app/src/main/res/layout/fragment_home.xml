@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <cn.chitanda.weather.widget.weather.DynamicWeatherView2
+        <cn.chitanda.weather.widget.weather.DynamicWeatherView
             android:id="@+id/dynamic_weather_view"
             android:layout_width="0dp"
             android:layout_height="0dp"

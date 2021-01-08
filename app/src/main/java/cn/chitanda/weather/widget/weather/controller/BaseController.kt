@@ -6,6 +6,7 @@ import android.graphics.Path
 import android.graphics.PointF
 import android.view.View
 import androidx.annotation.ColorInt
+import cn.chitanda.weather.widget.weather.DynamicWeatherView
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -38,7 +39,7 @@ abstract class BaseController : IController {
     }
 
 
-    override fun init(view: View, width: Int, height: Int) {
+    override fun init(view: DynamicWeatherView, width: Int, height: Int) {
         this.view = view
         this.width = width
         this.height = height
@@ -50,9 +51,6 @@ abstract class BaseController : IController {
         if (!isInited) return
         this.xAngle = xAngle
         this.yAngle = yAngle
-//        originPoint.x =width/2- xAngle * (width / 2f) / 90f
-//        view.postInvalidate()
-//        view.postInvalidate()
     }
 
     /*
@@ -92,8 +90,6 @@ abstract class BaseController : IController {
         canvas.drawColor(color)
     }
 
-    protected fun sin(num: Float) = sin(num * PI / 180).toFloat()
-    protected fun cos(num: Float) = cos(num * PI / 180).toFloat()
-    protected fun tan(num: Float) = tan(num * PI / 180).toFloat()
+
 
 }

@@ -10,28 +10,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import cn.chitanda.weather.adapter.WeatherViewPagerAdapter
 import cn.chitanda.weather.databinding.FragmentHomeBinding
 import cn.chitanda.weather.viewmodel.WeatherViewModel
-import cn.chitanda.weather.widget.weather.controller.SunnyController
+import cn.chitanda.weather.widget.weather.controller.RainOrSnowController
 import com.permissionx.guolindev.PermissionX
 import kotlin.math.PI
 
 private const val TAG = "HomeFragment"
 
-class HomeFragment : Fragment(), SensorEventListener {
+class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: WeatherViewModel by viewModels()
-    private lateinit var mSensorManager: SensorManager
-    private val accelerometerReading = FloatArray(3)
-    private val magnetometerReading = FloatArray(3)
-    private val rotationMatrix = FloatArray(9)
-    private val orientationAngles = FloatArray(3)
+
 
     private val weatherViewPagerAdapter by lazy { WeatherViewPagerAdapter() }
     override fun onCreateView(
@@ -63,60 +58,25 @@ class HomeFragment : Fragment(), SensorEventListener {
     }
 
     override fun onResume() {
-        mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER).also { accelerometer ->
-            mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI)
+
+        binding.dynamicWeatherView.apply {
+            weatherController?.resumeAnim()
+            onResume()
         }
-        mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD).also { field ->
-            mSensorManager.registerListener(this, field, SensorManager.SENSOR_DELAY_UI)
-        }
-        binding.dynamicWeatherView.weatherController?.resumeAnim()
         super.onResume()
     }
 
     override fun onPause() {
-        mSensorManager.unregisterListener(this)
-        binding.dynamicWeatherView.weatherController?.stopAnim()
+        binding.dynamicWeatherView.apply {
+            weatherController?.stopAnim()
+            onPause()
+        }
         super.onPause()
     }
 
-    override fun onSensorChanged(event: SensorEvent?) {
-        if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
-            System.arraycopy(event.values, 0, accelerometerReading, 0, accelerometerReading.size)
-        } else if (event?.sensor?.type == Sensor.TYPE_MAGNETIC_FIELD) {
-            System.arraycopy(event.values, 0, magnetometerReading, 0, magnetometerReading.size)
-        }
-        updateOrientationAngles()
-    }
 
-    // Compute the three orientation angles based on the most recent readings from
-    // the device's accelerometer and magnetometer.
-    private fun updateOrientationAngles() {
-        // Update rotation matrix, which is needed to update orientation angles.
-        SensorManager.getRotationMatrix(
-            rotationMatrix,
-            null,
-            accelerometerReading,
-            magnetometerReading
-        )
-
-        // "mRotationMatrix" now has up-to-date information.
-        SensorManager.getOrientation(rotationMatrix, orientationAngles)
-        // "orientationAngles" now has up-to-date information.
-        val rotationX =  (orientationAngles[1] * 180 / PI).toFloat()
-        val rotationY = (orientationAngles[2] * 180 / PI).toFloat()
-        binding.dynamicWeatherView.weatherController?.setOrientationAngles(
-            rotationY,
-            rotationX
-        )
-        binding.rotation.text = "绕 x 轴旋转的角度: $rotationX° \n绕 y 轴旋转的角度: $rotationY°"
-    }
-
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-
-    }
 
     private fun init() {
-        mSensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
         binding.weatherViewPager.apply {
             adapter = weatherViewPagerAdapter
 
@@ -142,6 +102,6 @@ class HomeFragment : Fragment(), SensorEventListener {
             binding.swipeRefresh.isRefreshing = false
         }
 
-        binding.dynamicWeatherView.weatherController = SunnyController(requireContext())
+        binding.dynamicWeatherView.weatherController = RainOrSnowController(requireContext())
     }
 }

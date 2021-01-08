@@ -2,6 +2,7 @@ package cn.chitanda.weather.utils
 
 import android.content.res.Resources
 import androidx.annotation.ColorInt
+import kotlin.math.PI
 import kotlin.math.max
 import kotlin.math.min
 
@@ -13,13 +14,13 @@ import kotlin.math.min
  */
 
 private val scale: Float get() = Resources.getSystem().displayMetrics.density
-val Int.dp: Int
+val Int.dp: Float
     get() {
-        return (scale * this + 0.5f).toInt()
+        return scale * this
     }
-val Float.dp: Int
+val Float.dp: Float
     get() {
-        return (scale * this + 0.5f).toInt()
+        return scale * this + 0.5f
     }
 
 
@@ -34,3 +35,7 @@ fun getRGB(@ColorInt color: Int): IntArray {
     val blue = 0xff and color
     return intArrayOf(red, green, blue)
 }
+
+fun sin(num: Float) = kotlin.math.sin(num * PI / 180).toFloat()
+fun cos(num: Float) = kotlin.math.cos(num * PI / 180).toFloat()
+fun tan(num: Float) = kotlin.math.tan(num * PI / 180).toFloat()

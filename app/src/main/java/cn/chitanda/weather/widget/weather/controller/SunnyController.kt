@@ -4,14 +4,13 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.util.Log
-import android.view.View
 import android.view.animation.LinearInterpolator
 import cn.chitanda.weather.R
+import cn.chitanda.weather.utils.sin
+import cn.chitanda.weather.widget.weather.DynamicWeatherView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.math.abs
 
 /**
@@ -19,7 +18,7 @@ import kotlin.math.abs
  *@createTime: 2021/1/2 14:45
  *@description:
  **/
-class SunnyController(protected val context: Context) : BaseController() {
+class SunnyController(private val context: Context) : BaseController() {
     private var rotation = 0f
     private var scale: Float = 1f
     private val minRadius: Float
@@ -41,14 +40,13 @@ class SunnyController(protected val context: Context) : BaseController() {
             interpolator = LinearInterpolator()
             addUpdateListener { value ->
                 rotation = value.animatedValue as Float
-//                view.postInvalidate()
             }
         }
     }
     private var xAnimator: ValueAnimator? = null
     private var yAnimator: ValueAnimator? = null
     private var scaleAnimator: ValueAnimator? = null
-    override fun init(view: View, width: Int, height: Int) {
+    override fun init(view: DynamicWeatherView, width: Int, height: Int) {
         super.init(view, width, height)
         resumeAnim()
     }
@@ -63,41 +61,37 @@ class SunnyController(protected val context: Context) : BaseController() {
         if (abs(this.xAngle - xAngle) >= 1) this.xAngle = xAngle
         if (abs(this.yAngle - yAngle) >= 1) this.yAngle = yAngle
         val endX = width / 2 - width * 0.5f * sin(this.xAngle)
-        val endY = -width / 4f + abs(width * 0.85f * sin(this.yAngle/2f))
-
-        Log.d(TAG, "setOrientationAngles: x ${this.xAngle} y ${this.yAngle}  scale ${scale}")
+        val endY = -width / 4f + abs(width * 0.85f * sin(this.yAngle / 2f))
         try {
-            MainScope().launch {
-                withContext(Dispatchers.Main) {
-                    yAnimator?.cancel()
-                    xAnimator?.cancel()
+            MainScope().launch(Dispatchers.Main) {
+                yAnimator?.cancel()
+                xAnimator?.cancel()
 
-                    xAnimator = ValueAnimator.ofFloat(originPoint.x, endX).apply {
-                        duration = 500
-                        interpolator = LinearInterpolator()
-                        addUpdateListener { v ->
-                            originPoint.x = v.animatedValue as Float
-                        }
-                        start()
+                xAnimator = ValueAnimator.ofFloat(originPoint.x, endX).apply {
+                    duration = 500
+                    interpolator = LinearInterpolator()
+                    addUpdateListener { v ->
+                        originPoint.x = v.animatedValue as Float
                     }
-                    yAnimator = ValueAnimator.ofFloat(originPoint.y, endY).apply {
-                        duration = 500
-                        interpolator = LinearInterpolator()
-                        addUpdateListener { v ->
-                            originPoint.y = v.animatedValue as Float
-                        }
-                        start()
-                    }
-                    scaleAnimator =
-                        ValueAnimator.ofFloat(scale, 1f - 0.4f / 90 * abs(yAngle % 90f)).apply {
-                            duration = 500
-                            interpolator = LinearInterpolator()
-                            addUpdateListener { v ->
-                                scale = v.animatedValue as Float
-                            }
-                            start()
-                        }
+                    start()
                 }
+                yAnimator = ValueAnimator.ofFloat(originPoint.y, endY).apply {
+                    duration = 500
+                    interpolator = LinearInterpolator()
+                    addUpdateListener { v ->
+                        originPoint.y = v.animatedValue as Float
+                    }
+                    start()
+                }
+                scaleAnimator =
+                    ValueAnimator.ofFloat(scale, 1f - 0.4f / 90 * abs(yAngle % 90f)).apply {
+                        duration = 500
+                        interpolator = LinearInterpolator()
+                        addUpdateListener { v ->
+                            scale = v.animatedValue as Float
+                        }
+                        start()
+                    }
             }
         } catch (e: Throwable) {
             e.printStackTrace()
