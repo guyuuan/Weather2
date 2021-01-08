@@ -19,10 +19,9 @@ import kotlin.math.abs
 
 class RainOrSnowController(private val context: Context) : BaseController() {
     private val flakeList = mutableListOf<FlakeController>()
-    private val paint: Paint
-        get() = listOf(Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.WHITE
-        }).random()
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.WHITE
+    }
 
     override fun init(view: DynamicWeatherView, width: Int, height: Int) {
         super.init(view, width, height)
@@ -42,12 +41,12 @@ class RainOrSnowController(private val context: Context) : BaseController() {
 
     override fun setOrientationAngles(xAngle: Float, yAngle: Float) {
         if (!isInited) return
-        if (abs(this.xAngle - xAngle) > 1) this.xAngle = xAngle
-        if (abs(this.yAngle-yAngle) > 1) this.yAngle = yAngle
+        if (abs(this.xAngle - xAngle) > 2) this.xAngle = xAngle
+        if (abs(this.yAngle - yAngle) > 2) this.yAngle = yAngle
     }
 
     override fun draw(canvas: Canvas) {
-        drawBackground(canvas, context.getColor(R.color.theme_color))
+        drawBackground(canvas, context.getColor(R.color.rain_background))
         flakeList.forEach {
             it.draw(canvas, xAngle, yAngle, paint)
         }

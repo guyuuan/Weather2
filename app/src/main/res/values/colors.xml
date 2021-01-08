@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="translate">#00000000</color>
     <color name="theme_color">#4A96D0</color>
+    <color name="rain_background">#1165B5</color>
 </resources>
