@@ -1,7 +1,6 @@
 package cn.chitanda.weather.network
 
 import android.util.Log
-import cn.chitanda.weather.model.ApiResult
 import cn.chitanda.weather.model.Weather
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -9,10 +8,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.await
-import java.lang.RuntimeException
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 /**
@@ -30,6 +26,10 @@ class NetworkManager private constructor(private val onError: (String) -> Unit) 
             instance ?: synchronized(this) {
                 instance ?: NetworkManager(onError).also { instance = it }
             }
+
+        fun close() {
+            instance = null
+        }
     }
 
     private val api by lazy {

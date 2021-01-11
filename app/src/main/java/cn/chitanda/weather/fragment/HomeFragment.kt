@@ -18,6 +18,7 @@ import cn.chitanda.weather.databinding.FragmentHomeBinding
 import cn.chitanda.weather.viewmodel.WeatherViewModel
 import cn.chitanda.weather.widget.weather.controller.RainOrSnowController
 import com.permissionx.guolindev.PermissionX
+import leakcanary.LeakCanary
 import kotlin.math.PI
 
 private const val TAG = "HomeFragment"
@@ -103,5 +104,9 @@ class HomeFragment : Fragment() {
         }
 
         binding.dynamicWeatherView.weatherController = RainOrSnowController(requireContext())
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

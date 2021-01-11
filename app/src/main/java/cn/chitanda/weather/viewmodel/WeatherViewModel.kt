@@ -110,4 +110,9 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
             }
         }
     }
+
+    override fun onCleared() {
+        NetworkManager.close()
+        super.onCleared()
+    }
 }

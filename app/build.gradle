@@ -73,4 +73,6 @@ dependencies {
 
     //MMKV
     implementation "com.tencent:mmkv-static:$mmkv_version"
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 }
