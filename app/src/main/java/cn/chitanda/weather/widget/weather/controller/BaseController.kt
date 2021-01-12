@@ -6,11 +6,9 @@ import android.graphics.Path
 import android.graphics.PointF
 import android.view.View
 import androidx.annotation.ColorInt
+import cn.chitanda.weather.utils.cos
+import cn.chitanda.weather.utils.sin
 import cn.chitanda.weather.widget.weather.DynamicWeatherView
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.tan
 
 /**
  *@auther: Chen
@@ -89,7 +87,6 @@ abstract class BaseController : IController {
     protected fun drawBackground(canvas: Canvas, @ColorInt color: Int) {
         canvas.drawColor(color)
     }
-
 
 
 }

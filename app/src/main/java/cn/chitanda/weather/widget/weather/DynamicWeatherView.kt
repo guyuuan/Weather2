@@ -40,6 +40,7 @@ class DynamicWeatherView @JvmOverloads constructor(
         get() = _controller
         set(value) {
             _controller = value
+            init()
         }
     private var isRunning = false
     private lateinit var canvas: Canvas

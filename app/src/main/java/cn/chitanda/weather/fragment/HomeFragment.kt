@@ -1,7 +1,6 @@
 package cn.chitanda.weather.fragment
 
 import android.Manifest
-import android.content.Context
 import android.hardware.*
 import android.os.Bundle
 import android.os.Handler
@@ -17,9 +16,8 @@ import cn.chitanda.weather.adapter.WeatherViewPagerAdapter
 import cn.chitanda.weather.databinding.FragmentHomeBinding
 import cn.chitanda.weather.viewmodel.WeatherViewModel
 import cn.chitanda.weather.widget.weather.controller.RainOrSnowController
+import cn.chitanda.weather.widget.weather.controller.SunnyController
 import com.permissionx.guolindev.PermissionX
-import leakcanary.LeakCanary
-import kotlin.math.PI
 
 private const val TAG = "HomeFragment"
 
@@ -65,6 +63,9 @@ class HomeFragment : Fragment() {
             onResume()
         }
         super.onResume()
+        Handler(Looper.myLooper()!!).postDelayed({
+            binding.dynamicWeatherView.weatherController = SunnyController(requireContext())
+        }, 5000)
     }
 
     override fun onPause() {
@@ -74,7 +75,6 @@ class HomeFragment : Fragment() {
         }
         super.onPause()
     }
-
 
 
     private fun init() {
