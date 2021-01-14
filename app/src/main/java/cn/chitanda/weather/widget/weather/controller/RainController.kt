@@ -17,18 +17,30 @@ import kotlin.math.abs
  * @Description:
  */
 
-class RainOrSnowController(private val context: Context) : BaseController() {
+class RainController(context: Context, private val rainType: Int = 305) :
+    BaseController(context) {
     private val flakeList = mutableListOf<FlakeController>()
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
     }
+    private val isThunderShower
+        get() = when (rainType) {
+            302, 303, 304 -> true
+            else -> false
+        }
+    private val count: Int
+        get() = when (rainType) {
+            300, 305, 309, 314, 350, 399 -> 40
+            302, 303, 304, 306, 315 -> 70
+            else -> 100
+        }
 
     override fun init(view: DynamicWeatherView, width: Int, height: Int) {
         super.init(view, width, height)
         val x = 0..width
         val y = 0..height
         flakeList.clear()
-        repeat(100) {
+        repeat(count) {
             flakeList.add(
                 RainFlake.create(
                     x.random().toFloat(),

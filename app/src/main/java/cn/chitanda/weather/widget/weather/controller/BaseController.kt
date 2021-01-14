@@ -1,5 +1,6 @@
 package cn.chitanda.weather.widget.weather.controller
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
@@ -15,7 +16,7 @@ import cn.chitanda.weather.widget.weather.DynamicWeatherView
  *@createTime: 2021/1/2 14:04
  *@description:
  **/
-abstract class BaseController : IController {
+abstract class BaseController(protected val context: Context) : IController {
     protected val TAG = "WeatherController"
     protected var width = 0
     protected var height = 0

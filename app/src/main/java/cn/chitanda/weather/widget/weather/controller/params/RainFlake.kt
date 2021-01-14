@@ -23,7 +23,7 @@ class RainFlake private constructor(
     companion object {
         private var refreshRate: Long = 1000L / 60
         private val widths = listOf(1.5f.dp, 2f.dp, 2.5f.dp)
-        private val heights = listOf(35.dp, 50.dp, 65.dp)
+        private val heights = listOf(40.dp, 55.dp, 70.dp)
         private val speeds: Float
             get() = screenHeight / listOf(200, 300, 400).random().dp * refreshRate
         private val lineWidth: Float
@@ -50,11 +50,6 @@ class RainFlake private constructor(
         }
     }
 
-    private fun init() {
-
-    }
-
-
     private val speed = speeds
     private val alpha = alphas
     private val color = colors
@@ -67,7 +62,7 @@ class RainFlake private constructor(
         val dx = x + sin(-xAngle) * h
         val dy = y + sin(yAngle) * h
         canvas.drawLine(x, y, dx, dy, paint)
-        moveTo(xAngle, yAngle )
+        moveTo(xAngle, yAngle)
     }
 
     override fun moveTo(xAngle: Float, yAngle: Float) {

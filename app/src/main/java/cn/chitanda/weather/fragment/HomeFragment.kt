@@ -11,13 +11,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import cn.chitanda.weather.adapter.WeatherViewPagerAdapter
 import cn.chitanda.weather.databinding.FragmentHomeBinding
 import cn.chitanda.weather.viewmodel.WeatherViewModel
-import cn.chitanda.weather.widget.weather.controller.RainOrSnowController
-import cn.chitanda.weather.widget.weather.controller.SunnyController
 import com.permissionx.guolindev.PermissionX
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val TAG = "HomeFragment"
 
@@ -52,27 +55,18 @@ class HomeFragment : Fragment() {
             }.request { allGranted, grantedList, deniedList ->
                 if (allGranted && grantedList.isNotEmpty() && deniedList.isEmpty()) {
                     viewModel.init()
+                    binding.swipeRefresh.isRefreshing = true
                 }
             }
     }
 
     override fun onResume() {
-
-        binding.dynamicWeatherView.apply {
-            weatherController?.resumeAnim()
-            onResume()
-        }
+        binding.dynamicWeatherView.onResume()
         super.onResume()
-        Handler(Looper.myLooper()!!).postDelayed({
-            binding.dynamicWeatherView.weatherController = SunnyController(requireContext())
-        }, 5000)
     }
 
     override fun onPause() {
-        binding.dynamicWeatherView.apply {
-            weatherController?.stopAnim()
-            onPause()
-        }
+        binding.dynamicWeatherView.onPause()
         super.onPause()
     }
 
@@ -87,7 +81,9 @@ class HomeFragment : Fragment() {
                     Handler(Looper.myLooper()!!).postDelayed({
                         binding.cityName.text =
                             weatherViewPagerAdapter.currentList[position].location.name
-                    }, 20)
+                        binding.dynamicWeatherView.weatherType =
+                            weatherViewPagerAdapter.currentList[position].now
+                    }, 10)
                 }
             })
         }
@@ -98,12 +94,15 @@ class HomeFragment : Fragment() {
         })
         viewModel.weatherList.observe(viewLifecycleOwner, {
             weatherViewPagerAdapter.submitList(it)
+            binding.swipeRefresh.isRefreshing = false
         })
         binding.swipeRefresh.setOnRefreshListener {
-            binding.swipeRefresh.isRefreshing = false
+            lifecycleScope.launch(Dispatchers.Default) {
+                delay(1000)
+                binding.swipeRefresh.isRefreshing = false
+            }
         }
 
-        binding.dynamicWeatherView.weatherController = RainOrSnowController(requireContext())
     }
 
     override fun onDestroy() {

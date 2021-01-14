@@ -18,7 +18,7 @@ import kotlin.math.abs
  *@createTime: 2021/1/2 14:45
  *@description:
  **/
-class SunnyController(private val context: Context) : BaseController() {
+class SunnyController( context: Context) : BaseController(context) {
     private var rotation = 0f
     private var scale: Float = 1f
     private val minRadius: Float
