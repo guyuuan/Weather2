@@ -11,6 +11,7 @@ import android.graphics.Canvas
  */
 class CloudyController(context: Context) : BaseController(context) {
     override fun draw(canvas: Canvas) {
+        drawBackground(canvas)
     }
 
     override fun resumeAnim() {
