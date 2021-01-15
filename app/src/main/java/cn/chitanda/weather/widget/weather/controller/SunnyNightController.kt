@@ -12,6 +12,7 @@ import android.graphics.Canvas
 class SunnyNightController(context: Context) : BaseController(context) {
 
     override fun draw(canvas: Canvas) {
+        drawBackground(canvas)
     }
 
     override fun resumeAnim() {

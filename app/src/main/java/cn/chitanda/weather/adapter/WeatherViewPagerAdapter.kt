@@ -2,8 +2,6 @@ package cn.chitanda.weather.adapter
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
-
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +40,7 @@ class WeatherViewPagerAdapter : BaseAdapter<Weather, WeatherItemViewHolder>() {
         }
         holder.header.apply {
             layoutParams = layoutParams.apply {
+//                postDelayed({ height = holder.paddingTop }, 200)
                 height = holder.paddingTop
             }
         }
@@ -52,7 +51,7 @@ class WeatherViewPagerAdapter : BaseAdapter<Weather, WeatherItemViewHolder>() {
 class WeatherItemViewHolder(binding: WeatherItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
     val paddingTop: Int
-        get() = Resources.getSystem().displayMetrics.heightPixels - nowText.layoutParams.height - nowTemp.layoutParams.height - dailyTemp.layoutParams.height
+        get() = Resources.getSystem().displayMetrics.heightPixels - nowText.layoutParams.height - nowTemp.layoutParams.height - dailyTemp.layoutParams.height/2
     val group = binding.group
     val header = binding.emptyHeader
     val nowTemp = binding.nowTemp

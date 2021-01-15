@@ -1,5 +1,7 @@
 package cn.chitanda.weather.model
 
+import cn.chitanda.weather.R
+
 /**
  * @Author:       Chen
  * @Date:         2020/12/29 17:58
@@ -13,31 +15,25 @@ data class Weather(
     val daily: List<Daily>?,
     val hourly: List<Hourly>?
 )
-/*
- * @Description 300-400 雨
- *              400-500 雪
- * #linke https://dev.qweather.com/docs/start/icons/
- */
-class Type {
-    companion object {
-        const val Sunny = 100
-        const val Cloudy = 101
-        const val FewClouds = 102
-        const val PartlyCloudy = 103
-        const val Overcast = 104
-        const val SunnyNight = 150
-        const val CloudyNight = 153
-        const val OvercastNight = 154
-        const val ShowerRain = 300
-        const val HeavyShowerRain = 301
-        const val Thundershower = 302
-        const val HeavyThunderstorm = 303
-        const val ThundershowerWithHail = 304
-        const val LightRain = 305
-        const val ModerateRain = 306
-        const val HeavyRain = 307
-        const val ExtremeRain = 308
-        const val DrizzleRain = 309
-        const val Storm = 310
-    }
+
+fun weatherIconSelector(icon: Int) = when (icon) {
+    100 -> R.drawable.ic_sunny
+    101, 102, 103 -> R.drawable.ic_cloudy
+    104 -> R.drawable.ic_overcast
+    150 -> R.drawable.ic_sunny_night
+    300, 301 -> R.drawable.ic_shower
+    302, 303 -> R.drawable.ic_thundershower
+    304 -> R.drawable.ic_hail
+    305, 306, 314, 350, 351, 399 -> R.drawable.ic_rain
+    307, 308, 310, 311, 312, 315, 316, 317, 318 -> R.drawable.ic_downpour
+    309 -> R.drawable.ic_drizzle
+    400, 401, 407, 457, 499 -> R.drawable.ic_snow
+    402, 408, 409 -> R.drawable.ic_flurry
+    403, 410 -> R.drawable.ic_snowstorm
+    404, 405, 406, 456 -> R.drawable.ic_sleet
+    500, 501,509,510,514,515 -> R.drawable.ic_fog
+    502,511,512,513->R.drawable.ic_haze
+    503,504,507,508->R.drawable.ic_sandstorm
+    900->R.drawable.ic_hot
+    else -> R.drawable.ic_empty
 }

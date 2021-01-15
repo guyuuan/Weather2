@@ -39,6 +39,7 @@ class DynamicWeatherView @JvmOverloads constructor(
     var weatherType: Now? = null
         set(value) {
             if (value == null) return
+            field = value
             weatherController = when (value.icon.toInt()) {
                 in 300..399, 404, 405, 406, 456 -> {
                     RainController(context, value.icon.toInt())
@@ -49,7 +50,6 @@ class DynamicWeatherView @JvmOverloads constructor(
                 in 400..499 -> SnowController(context, value.icon.toInt())
                 else -> EmptyWeatherController(context)
             }
-            field = value
         }
 
     private var weatherController: IController = EmptyWeatherController(context)

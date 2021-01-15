@@ -1,11 +1,11 @@
 package cn.chitanda.weather.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import cn.chitanda.weather.databinding.DailyItemBinding
 import cn.chitanda.weather.model.Daily
+import cn.chitanda.weather.model.weatherIconSelector
 import cn.chitanda.weather.widget.polyline.WeatherPolyLineView
 import kotlin.math.max
 import kotlin.math.min
@@ -17,6 +17,7 @@ import kotlin.math.min
  * @Description:
  */
 private const val TAG = "DailyRvAdapter"
+
 class DailyRvAdapter : BaseAdapter<Daily, DailyItemViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DailyItemViewHolder {
         return DailyItemViewHolder(
@@ -41,9 +42,19 @@ class DailyRvAdapter : BaseAdapter<Daily, DailyItemViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: DailyItemViewHolder, position: Int) {
-//        holder.itemView.tag = getItem(position)
-        holder.daily.currentList = currentList
-        holder.daily.setPosition(position)
+        val item = getItem(position)
+        with(holder) {
+            daily.apply {
+                currentList = this@DailyRvAdapter.currentList
+                setPosition(position)
+            }
+            date.text = item.fxDate
+            textDay.text = item.textDay
+            textNight.text = item.textNight
+            iconDay.setImageResource(weatherIconSelector(item.iconDay?.toInt() ?: -1))
+            iconNight.setImageResource(weatherIconSelector(item.iconNight?.toInt() ?: -1))
+        }
+
     }
 
     override fun submitList(list: MutableList<Daily>?) {
@@ -61,5 +72,9 @@ class DailyRvAdapter : BaseAdapter<Daily, DailyItemViewHolder>() {
 
 class DailyItemViewHolder(binding: DailyItemBinding) : RecyclerView.ViewHolder(binding.root) {
     val daily = binding.daily
-
+    val date = binding.date
+    val textDay = binding.textDay
+    val textNight = binding.textNight
+    val iconDay = binding.iconDay
+    val iconNight = binding.iconNight
 }

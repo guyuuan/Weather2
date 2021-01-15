@@ -83,7 +83,7 @@ class HomeFragment : Fragment() {
                             weatherViewPagerAdapter.currentList[position].location.name
                         binding.dynamicWeatherView.weatherType =
                             weatherViewPagerAdapter.currentList[position].now
-                    }, 10)
+                    }, 20)
                 }
             })
         }

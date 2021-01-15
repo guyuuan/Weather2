@@ -1,15 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="80dp"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <cn.chitanda.weather.widget.polyline.WeatherPolyLineView
         android:id="@+id/daily"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/icon_night"
+        app:layout_constraintEnd_toEndOf="@+id/text_day"
+        app:layout_constraintStart_toStartOf="@+id/text_day"
+        app:layout_constraintTop_toBottomOf="@+id/text_day" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/icon_day"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ImageView
+        android:id="@+id/icon_day"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/text_day"
+        app:layout_constraintEnd_toEndOf="@+id/date"
+        app:layout_constraintStart_toStartOf="@+id/date"
+        app:layout_constraintTop_toBottomOf="@+id/date"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/text_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/daily"
+        app:layout_constraintEnd_toEndOf="@+id/icon_day"
+        app:layout_constraintStart_toStartOf="@+id/icon_day"
+        app:layout_constraintTop_toBottomOf="@+id/icon_day" />
+
+    <ImageView
+        android:id="@+id/icon_night"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/text_night"
+        app:layout_constraintEnd_toEndOf="@+id/daily"
+        app:layout_constraintStart_toStartOf="@+id/daily"
+        app:layout_constraintTop_toBottomOf="@+id/daily"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/text_night"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/icon_night"
+        app:layout_constraintStart_toStartOf="@+id/icon_night"
+        app:layout_constraintTop_toBottomOf="@+id/icon_night" />
 </androidx.constraintlayout.widget.ConstraintLayout>
