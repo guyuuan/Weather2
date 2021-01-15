@@ -134,5 +134,8 @@ fabric.properties
 
 !/gradle/wrapper/gradle-wrapper.jar
 
+### Android Build APK
+app/debug
+app/release
 
 # End of https://www.gitignore.io/api/androidstudio
