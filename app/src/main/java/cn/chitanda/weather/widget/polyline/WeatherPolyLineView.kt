@@ -74,7 +74,7 @@ class WeatherPolyLineView @JvmOverloads constructor(
         midMinPoint = PointF(viewWidth * 0.5f, viewHeight * 0.75f)
         endMaxPoint = PointF(viewWidth.toFloat(), viewHeight * 0.25f)
         endMinPoint = PointF(viewWidth.toFloat(), viewHeight * 0.75f)
-        maxHeight = 0.7f * viewHeight
+        maxHeight = viewHeight - textPaint.textSize * 2
         leftPath = Path().apply {
             reset()
             moveTo(startMaxPoint.x, startMaxPoint.y)

@@ -25,7 +25,10 @@ class WeatherViewPagerAdapter : BaseAdapter<Weather, WeatherItemViewHolder>() {
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: WeatherItemViewHolder, position: Int) {
         val item = getItem(position)
-        holder.nowTemp.text = (item.now?.temp ?: "-") + " ℃"
+        holder.nowTemp.apply {
+            text = (item.now?.temp ?: "-") + " ℃"
+        }
+
         holder.nowText.text = item.now?.text ?: "-"
         holder.todayTemp.text =
             "${item.daily?.first()?.tempMin ?: "-"} / ${item.daily?.first()?.tempMax ?: "-"} ℃"
@@ -40,8 +43,8 @@ class WeatherViewPagerAdapter : BaseAdapter<Weather, WeatherItemViewHolder>() {
         }
         holder.header.apply {
             layoutParams = layoutParams.apply {
-//                postDelayed({ height = holder.paddingTop }, 200)
-                height = holder.paddingTop
+                postDelayed({ height = holder.paddingTop }, 200)
+                height = Resources.getSystem().displayMetrics.heightPixels / 5 * 3
             }
         }
     }
@@ -51,8 +54,7 @@ class WeatherViewPagerAdapter : BaseAdapter<Weather, WeatherItemViewHolder>() {
 class WeatherItemViewHolder(binding: WeatherItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
     val paddingTop: Int
-        get() = Resources.getSystem().displayMetrics.heightPixels - nowText.layoutParams.height - nowTemp.layoutParams.height - dailyTemp.layoutParams.height/2
-    val group = binding.group
+        get() = Resources.getSystem().displayMetrics.heightPixels - nowText.layoutParams.height - nowTemp.layoutParams.height - dailyTemp.layoutParams.height / 2
     val header = binding.emptyHeader
     val nowTemp = binding.nowTemp
     val nowText = binding.nowText
