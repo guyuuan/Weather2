@@ -9,6 +9,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -47,6 +50,13 @@ class HomeFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.weatherViewPager) { v, insets ->
+            v.updatePadding(
+                top=insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
+                bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom,
+            )
+            insets
+        }
         PermissionX.init(this).permissions(Manifest.permission.ACCESS_FINE_LOCATION)
             .onExplainRequestReason { scope, deniedList ->
                 scope.showRequestReasonDialog(deniedList, "Weather需要您同意一下权限才能正常使用", "好的", "不")

@@ -18,7 +18,7 @@ data class Weather(
 
 fun weatherIconSelector(icon: Int) = when (icon) {
     100 -> R.drawable.ic_sunny
-    101, 102, 103 -> R.drawable.ic_cloudy
+    101, 102, 103,154 -> R.drawable.ic_cloudy
     104 -> R.drawable.ic_overcast
     150 -> R.drawable.ic_sunny_night
     300, 301 -> R.drawable.ic_shower
@@ -35,5 +35,5 @@ fun weatherIconSelector(icon: Int) = when (icon) {
     502,511,512,513->R.drawable.ic_haze
     503,504,507,508->R.drawable.ic_sandstorm
     900->R.drawable.ic_hot
-    else -> R.drawable.ic_empty
+    else -> R.drawable.ic_error
 }
